@@ -575,12 +575,33 @@ function Signup({ goHome, onGoogleLogin }) {
 ============================== */
 
 function Home() {
+  const [activeNav, setActiveNav] = useState("home");
+
+  const today = new Date();
+
+  const day = today.toLocaleDateString("en-US", {
+    day: "2-digit",
+  });
+
+  const month = today.toLocaleDateString("en-US", {
+    month: "short",
+  });
+
+  const weekday = today.toLocaleDateString("en-US", {
+    weekday: "long",
+  });
+
   return (
     <main className="home">
+      {/* Decorative background */}
+      <div className="home-glow home-glow-one" />
+      <div className="home-glow home-glow-two" />
+
+      {/* HEADER */}
       <header className="home-header">
         <div>
           <p className="home-date">
-            WEDNESDAY · SEPTEMBER 23
+            {weekday.toUpperCase()} · {month.toUpperCase()} {day}
           </p>
 
           <h1>
@@ -590,9 +611,16 @@ function Home() {
           </h1>
         </div>
 
-        <div className="avatar">A</div>
+        <button
+          className="avatar"
+          onClick={() => setActiveNav("profile")}
+          aria-label="Open profile"
+        >
+          A
+        </button>
       </header>
 
+      {/* TODAY CARD */}
       <section className="day-card">
         <div className="day-card-content">
           <p>YOUR DAY</p>
@@ -603,53 +631,111 @@ function Home() {
             feel lighter.
           </h2>
 
-          <button>
+          <button
+            onClick={() => setActiveNav("tasks")}
+            className="planner-button"
+          >
             Open my planner
             <span>↗</span>
           </button>
         </div>
 
         <div className="day-decoration">
-          <div>23</div>
-          <span>SEP</span>
+          <div>{day}</div>
+          <span>{month.toUpperCase()}</span>
         </div>
       </section>
 
+      {/* QUICK SPACE */}
       <div className="section-heading">
-        <h3>Quick space</h3>
-        <button>See all</button>
+        <div>
+          <p className="section-eyebrow">YOUR LITTLE SPACES</p>
+          <h3>Quick space</h3>
+        </div>
+
+        <button onClick={() => setActiveNav("tasks")}>See all</button>
       </div>
 
       <section className="quick-space">
-        <QuickCard
-          icon="✓"
-          title="My tasks"
-          text="3 things today"
-          type="pink"
-        />
+        <button
+          className="quick-card-button"
+          onClick={() => setActiveNav("tasks")}
+        >
+          <QuickCard
+            icon="✓"
+            title="My tasks"
+            text="3 things today"
+            type="pink"
+          />
+        </button>
 
-        <QuickCard
-          icon="✦"
-          title="AI Assistant"
-          text="Ask Lifely"
-          type="lavender"
-        />
+        <button
+          className="quick-card-button"
+          onClick={() => setActiveNav("ai")}
+        >
+          <QuickCard
+            icon="✦"
+            title="AI Assistant"
+            text="Ask Lifely"
+            type="lavender"
+          />
+        </button>
 
-        <QuickCard
-          icon="♡"
-          title="Wellbeing"
-          text="Check in with you"
-          type="cream"
-        />
+        <button
+          className="quick-card-button"
+          onClick={() => setActiveNav("wellness")}
+        >
+          <QuickCard
+            icon="♡"
+            title="Wellbeing"
+            text="Check in with you"
+            type="cream"
+          />
+        </button>
 
-        <QuickCard
-          icon="↗"
-          title="Career"
-          text="Keep growing"
-          type="peach"
-        />
+        <button
+          className="quick-card-button"
+          onClick={() => setActiveNav("career")}
+        >
+          <QuickCard
+            icon="↗"
+            title="Career"
+            text="Keep growing"
+            type="peach"
+          />
+        </button>
       </section>
 
+      {/* TODAY'S FOCUS */}
+      <section className="focus-card">
+        <div className="focus-top">
+          <div>
+            <span>✦</span>
+            <p>TODAY'S FOCUS</p>
+          </div>
+
+          <small>0%</small>
+        </div>
+
+        <h3>
+          A little progress
+          <br />
+          is still progress.
+        </h3>
+
+        <div className="focus-progress">
+          <span />
+        </div>
+
+        <div className="focus-bottom">
+          <small>Start with one small thing.</small>
+          <button onClick={() => setActiveNav("tasks")}>
+            Start ↗
+          </button>
+        </div>
+      </section>
+
+      {/* DAILY NOTE */}
       <section className="motivation-card">
         <div>
           <span>DAILY NOTE</span>
@@ -666,25 +752,44 @@ function Home() {
         <div className="motivation-flower">✿</div>
       </section>
 
+      {/* BOTTOM NAVIGATION */}
       <nav className="bottom-navigation">
-        <button className="nav-active">
+        <button
+          className={activeNav === "home" ? "nav-active" : ""}
+          onClick={() => setActiveNav("home")}
+        >
           <span>⌂</span>
           Home
         </button>
 
-        <button>
+        <button
+          className={activeNav === "tasks" ? "nav-active" : ""}
+          onClick={() => setActiveNav("tasks")}
+        >
           <span>✓</span>
           Tasks
         </button>
 
-        <button className="ai-button">✦</button>
+        <button
+          className={`ai-button ${activeNav === "ai" ? "ai-active" : ""}`}
+          onClick={() => setActiveNav("ai")}
+          aria-label="AI Assistant"
+        >
+          ✦
+        </button>
 
-        <button>
+        <button
+          className={activeNav === "wellness" ? "nav-active" : ""}
+          onClick={() => setActiveNav("wellness")}
+        >
           <span>♡</span>
           Wellness
         </button>
 
-        <button>
+        <button
+          className={activeNav === "profile" ? "nav-active" : ""}
+          onClick={() => setActiveNav("profile")}
+        >
           <span>○</span>
           Profile
         </button>
@@ -692,7 +797,6 @@ function Home() {
     </main>
   );
 }
-
 function QuickCard({ icon, title, text, type }) {
   return (
     <article className={`quick-card ${type}`}>
