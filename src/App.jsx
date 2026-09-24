@@ -37,30 +37,45 @@ function App() {
 
   // Vérifie si l'utilisateur est déjà connecté
   useEffect(() => {
-    const checkSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+  let mounted = true;
 
-      if (session) {
-        setScreen("home");
-      }
-    };
-
-    checkSession();
-
+  const initializeAuth = async () => {
     const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (mounted && session) {
+      setScreen("home");
+    }
+  };
+
+  initializeAuth();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((event, session) => {
+    if (!mounted) return;
+
+    if (
+      event === "SIGNED_IN" ||
+      event === "INITIAL_SESSION" ||
+      event === "TOKEN_REFRESHED"
+    ) {
       if (session) {
         setScreen("home");
       }
-    });
+    }
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (event === "SIGNED_OUT") {
+      setScreen("signup");
+    }
+  });
+
+  return () => {
+    mounted = false;
+    subscription.unsubscribe();
+  };
+}, []);
 
   const nextSlide = () => {
     if (slide < onboarding.length - 1) {
